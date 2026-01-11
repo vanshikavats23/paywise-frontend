@@ -4,7 +4,7 @@ function switchView(view) {
 }
 
 function renderApp() {
-  // Background control
+  // Auth background
   if (State.view === "login" || State.view === "signup") {
     document.body.classList.add("auth");
   } else {
@@ -13,10 +13,15 @@ function renderApp() {
 
   if (State.view === "login") {
     renderLogin();
-  } else if (State.view === "signup") {
+  } 
+  else if (State.view === "signup") {
     renderSignup();
-  } else if (State.view === "dashboard") {
+  } 
+  else if (State.view === "dashboard") {
     renderDashboard();
+  } 
+  else if (State.view === "group") {
+    renderGroup();
   }
 }
 

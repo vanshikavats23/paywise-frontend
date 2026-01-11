@@ -2,6 +2,7 @@ function renderDashboard() {
   const app = document.getElementById("app");
 
   app.innerHTML = `
+    <!-- HEADER -->
     <header class="header">
       <div class="header-left">
         <img src="assets/logo.png" alt="PayWise logo" />
@@ -13,6 +14,7 @@ function renderDashboard() {
       </button>
     </header>
 
+    <!-- MAIN -->
     <main class="main">
       <h2>Good evening, ${State.user?.name || "there"} 👋</h2>
       <p style="color:#64748B; margin-bottom:32px;">
@@ -34,9 +36,18 @@ function renderDashboard() {
 
         ${
           State.groups.length === 0
-            ? "<p style='margin-top:12px; color:#64748B;'>No groups yet</p>"
+            ? `<p style="margin-top:12px; color:#64748B;">No groups yet</p>`
             : State.groups.map(g => `
-                <div style="margin-top:12px; padding:12px; border-radius:12px; background:#1E293B;">
+                <div
+                  onclick="openGroup(${g.id})"
+                  style="
+                    margin-top:12px;
+                    padding:12px;
+                    border-radius:12px;
+                    background:#1E293B;
+                    cursor:pointer;
+                  "
+                >
                   <strong>${g.name}</strong><br/>
                   <span style="font-size:13px; color:#94A3B8;">
                     Members: ${g.members.join(", ")}
@@ -50,17 +61,31 @@ function renderDashboard() {
     ${renderCreateGroupModal()}
   `;
 }
+
+/* ---------------- GROUP NAVIGATION ---------------- */
+
+function openGroup(groupId) {
+  State.activeGroupId = groupId;
+  State.view = "group";
+  renderApp();
+}
+
+/* ---------------- CREATE GROUP MODAL ---------------- */
+
 function renderCreateGroupModal() {
   return `
-    <div id="groupModal" style="
-      display:none;
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,0.4);
-      align-items:center;
-      justify-content:center;
-      z-index:1000;
-    ">
+    <div
+      id="groupModal"
+      style="
+        display:none;
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,0.4);
+        align-items:center;
+        justify-content:center;
+        z-index:1000;
+      "
+    >
       <div class="auth-card">
         <h3>Create Group</h3>
 
@@ -83,6 +108,9 @@ function openCreateGroupModal() {
 function closeGroupModal() {
   document.getElementById("groupModal").style.display = "none";
 }
+
+/* ---------------- CREATE GROUP LOGIC ---------------- */
+
 function createGroup() {
   const name = document.getElementById("groupName").value.trim();
   const membersInput = document.getElementById("groupMembers").value.trim();
@@ -113,5 +141,6 @@ function createGroup() {
   });
 
   saveGroups();
+  closeGroupModal();
   renderDashboard();
 }
