@@ -1,3 +1,7 @@
+/* ===============================
+   AUTH VIEWS
+================================ */
+
 function renderLogin() {
   const app = document.getElementById("app");
 
@@ -28,7 +32,7 @@ function renderSignup() {
 
       <input id="signupName" placeholder="Name" />
       <input id="signupEmail" placeholder="Email" />
-      <input id="signupPassword" type="password" placeholder="Password" />
+      <input id="signupPassword" type="password" />
 
       <p id="signupError" style="color:#dc2626; font-size:13px;"></p>
 
@@ -40,9 +44,19 @@ function renderSignup() {
     </div>
   `;
 }
+
+/* ===============================
+   VALIDATION
+================================ */
+
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
+
+/* ===============================
+   LOGIN
+================================ */
+
 function handleLogin() {
   const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value.trim();
@@ -77,11 +91,15 @@ function handleLogin() {
     return;
   }
 
-  // AUTH SUCCESS
+  /* ---- AUTH SUCCESS ---- */
+  State.user = storedUser;          // 🔑 persist session in memory
   State.view = "dashboard";
   renderApp();
 }
 
+/* ===============================
+   SIGNUP
+================================ */
 
 function handleSignup() {
   const name = document.getElementById("signupName").value.trim();
@@ -108,9 +126,11 @@ function handleSignup() {
 
   const user = { name, email, password };
 
+  // Save permanently
   localStorage.setItem("paywise_user", JSON.stringify(user));
 
+  /* ---- AUTH SUCCESS ---- */
+  State.user = user;                // 🔑 persist session in memory
   State.view = "dashboard";
   renderApp();
 }
-

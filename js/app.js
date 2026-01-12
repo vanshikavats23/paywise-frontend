@@ -2,8 +2,16 @@ function switchView(view) {
   State.view = view;
   renderApp();
 }
-
 function renderApp() {
+  /* 🔐 SESSION GUARD */
+  if (State.user && (State.view === "login" || State.view === "signup")) {
+    State.view = "dashboard";
+  }
+
+  if (!State.user && (State.view === "dashboard" || State.view === "group")) {
+    State.view = "login";
+  }
+
   // Auth background
   if (State.view === "login" || State.view === "signup") {
     document.body.classList.add("auth");
@@ -25,10 +33,22 @@ function renderApp() {
   }
 }
 
+
+// APP BOOTSTRAP
 // APP BOOTSTRAP
 window.onload = () => {
   const loader = document.getElementById("loader");
   const app = document.getElementById("app");
+
+  // 🔑 AUTO LOGIN CHECK
+  const savedUser = localStorage.getItem("paywise_user");
+
+  if (savedUser) {
+    State.user = JSON.parse(savedUser);
+    State.view = "dashboard";
+  } else {
+    State.view = "login";
+  }
 
   setTimeout(() => {
     loader.style.display = "none";

@@ -260,3 +260,13 @@ select {
     font-size: 18px;
   }
 }
+.settings-item {
+  padding:10px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:14px;
+}
+
+.settings-item:hover {
+  background:#1E293B;
+}

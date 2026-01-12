@@ -9,9 +9,11 @@ function renderDashboard() {
         <span>PayWise</span>
       </div>
 
-      <button class="theme-toggle" onclick="toggleTheme()">
-        ${State.theme === "light" ? "🌙 Dark" : "☀️ Light"}
-      </button>
+     <div style="position:relative;">
+    <button class="theme-toggle" onclick="toggleSettings()">⚙️</button>
+    ${renderSettingsWidget()}
+        </div>
+
     </header>
 
     <!-- MAIN -->
@@ -144,3 +146,54 @@ function createGroup() {
   closeGroupModal();
   renderDashboard();
 }
+/* ---------------- SETTINGS WIDGET ---------------- */
+function renderSettingsWidget() {
+  return `
+    <div
+      id="settingsWidget"
+      style="
+        display:none;
+        position:absolute;
+        right:0;
+        top:48px;
+        width:220px;
+        background:#0F172A;
+        border-radius:14px;
+        padding:16px;
+        box-shadow:0 10px 30px rgba(0,0,0,0.4);
+        z-index:1000;
+      "
+    >
+      <div style="margin-bottom:12px;">
+        <strong>${State.user?.name || "User"}</strong><br/>
+        <span style="font-size:13px; color:#94A3B8;">
+          ${State.user?.email || ""}
+        </span>
+      </div>
+
+      <div class="settings-item" onclick="toggleTheme()">
+        🌗 Toggle Theme
+      </div>
+
+      <div class="settings-item" onclick="logout()">
+        🚪 Logout
+      </div>
+    </div>
+  `;
+}
+// ---------------- SETTINGS WIDGET LOGIC ---------------- //
+function toggleSettings() {
+  const widget = document.getElementById("settingsWidget");
+  if (!widget) return;
+
+  widget.style.display =
+    widget.style.display === "block" ? "none" : "block";
+}
+/* ---------------- LOGOUT ---------------- */
+function logout() {
+  localStorage.removeItem("paywise_user");
+  State.user = null;
+  State.view = "login";
+  renderApp();
+}
+
