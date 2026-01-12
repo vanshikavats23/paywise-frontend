@@ -38,34 +38,56 @@ function renderGroup() {
       </div>
 
       <!-- ADD EXPENSE -->
-      <div class="auth-card" style="margin-top:24px;">
-        <h3>Add Expense</h3>
+      <div class="auth-card">
+  <h3>Add Expense</h3>
 
-        <label>Description</label>
-        <input id="expenseDesc" placeholder="e.g. Grocery" />
+  <!-- Description -->
+  <div class="field">
+    <label>Description</label>
+    <input
+      id="expenseDesc"
+      placeholder="e.g. Grocery, Dinner"
+    />
+  </div>
 
-        <label>Total Amount</label>
-        <input id="expenseAmount" type="number" />
+  <!-- Amount + Paid By -->
+  <div class="row">
+    <div class="field">
+      <label>Amount</label>
+      <input
+        id="expenseAmount"
+        type="number"
+        placeholder="₹0"
+      />
+    </div>
 
-        <label>Paid by</label>
-        <select id="expensePaidBy">
-          ${group.members.map(m => `<option value="${m}">${m}</option>`).join("")}
-        </select>
+    <div class="field">
+      <label>Paid by</label>
+      <select id="expensePaidBy">
+        ${group.members.map(m => `<option value="${m}">${m}</option>`).join("")}
+      </select>
+    </div>
+  </div>
 
-        <label>Split type</label>
-        <select id="splitType" onchange="renderSplitInputs()">
-          <option value="equal">Split equally</option>
-          <option value="custom">Unequal split</option>
-        </select>
+  <!-- Split Type -->
+  <div class="field">
+    <label>Split type</label>
+    <select id="splitType" onchange="renderSplitInputs()">
+      <option value="equal">Split equally</option>
+      <option value="custom">Unequal split</option>
+    </select>
+  </div>
 
-        <div id="splitInputs"></div>
+  <!-- Dynamic split inputs -->
+  <div id="splitInputs"></div>
 
-        <p id="expenseError" class="error-text"></p>
+  <p id="expenseError" class="error-text"></p>
 
-        <button onclick="addExpense()" style="width:100%;">
-          Add Expense
-        </button>
-      </div>
+  <button class="primary-btn" onclick="addExpense()">
+    Add Expense
+  </button>
+</div>
+
 
       <!-- EXPENSES -->
       <div class="auth-card" style="margin-top:24px;">
