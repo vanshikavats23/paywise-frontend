@@ -12,10 +12,10 @@ function renderGroup() {
     return;
   }
 
-  // 🔒 Normalize old/broken data safely
   normalizeExpenses(group);
 
   app.innerHTML = `
+    <!-- HEADER -->
     <header class="header">
       <div class="header-left">
         <img src="assets/logo.png" />
@@ -27,86 +27,92 @@ function renderGroup() {
       </button>
     </header>
 
+    <!-- MAIN -->
     <main class="main">
-      <button onclick="goBack()">← Back</button>
+      <div class="group-container">
 
-      <div class="stack">
-      <!-- MEMBERS -->
-      <div class="auth-card">
-        <h3>Members</h3>
-        <p>${group.members.join(", ")}</p>
-      </div>
+        <button onclick="goBack()" class="secondary-btn">← Back</button>
 
-      <!-- ADD EXPENSE -->
-      <div class="auth-card">
-  <h3>Add Expense</h3>
-
-  <!-- Description -->
-  <div class="field">
-    <label>Description</label>
-    <input
-      id="expenseDesc"
-      placeholder="e.g. Grocery, Dinner"
-    />
-  </div>
-
-  <!-- Amount + Paid By -->
-  <div class="row">
-    <div class="field">
-      <label>Amount</label>
-      <input
-        id="expenseAmount"
-        type="number"
-        placeholder="₹0"
-      />
-    </div>
-
-    <div class="field">
-      <label>Paid by</label>
-      <select id="expensePaidBy">
-        ${group.members.map(m => `<option value="${m}">${m}</option>`).join("")}
-      </select>
-    </div>
-  </div>
-
-  <!-- Split Type -->
-  <div class="field">
-    <label>Split type</label>
-    <select id="splitType" onchange="renderSplitInputs()">
-      <option value="equal">Split equally</option>
-      <option value="custom">Unequal split</option>
-    </select>
-  </div>
-
-  <!-- Dynamic split inputs -->
-  <div id="splitInputs"></div>
-
-  <p id="expenseError" class="error-text"></p>
-
-  <button class="primary-btn" onclick="addExpense()">
-    Add Expense
-  </button>
-</div>
-
-
-      <!-- EXPENSES -->
-      <div class="auth-card" style="margin-top:24px;">
-        <h3>Expenses</h3>
-        ${renderExpenses(group)}
-      </div>
-
-      <!-- SETTLE UP -->
-      <div class="auth-card" style="margin-top:24px;">
-        <h3>Settle Up</h3>
-        ${renderSettlements(group)}
-      </div>
+        <!-- MEMBERS -->
+        <div class="card">
+          <h3>Members</h3>
+          <p class="muted">${group.members.join(", ")}</p>
         </div>
+
+        <!-- ADD EXPENSE -->
+        <div class="card">
+          <h3>Add Expense</h3>
+
+          <div class="add-expense-form">
+            <div class="field">
+              <label>Description</label>
+              <input
+                id="expenseDesc"
+                placeholder="e.g. Grocery, Dinner"
+              />
+            </div>
+
+            <div class="row">
+              <div class="field">
+                <label>Amount</label>
+                <input
+                  id="expenseAmount"
+                  type="number"
+                  placeholder="₹0"
+                />
+              </div>
+
+              <div class="field">
+                <label>Paid by</label>
+                <select id="expensePaidBy">
+                  ${group.members.map(m => `
+                    <option value="${m}">${m}</option>
+                  `).join("")}
+                </select>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Split type</label>
+              <select id="splitType" onchange="renderSplitInputs()">
+                <option value="equal">Split equally</option>
+                <option value="custom">Unequal split</option>
+              </select>
+            </div>
+
+            <div id="splitInputs"></div>
+
+            <p id="expenseError" class="error-text"></p>
+
+            <button class="primary-btn" onclick="addExpense()">
+              Add Expense
+            </button>
+          </div>
+        </div>
+
+        <!-- EXPENSES -->
+        <div class="card">
+          <h3>Expenses</h3>
+          <div class="stack">
+            ${renderExpenses(group)}
+          </div>
+        </div>
+
+        <!-- SETTLE UP -->
+        <div class="card">
+          <h3>Settle Up</h3>
+          <div class="stack">
+            ${renderSettlements(group)}
+          </div>
+        </div>
+
+      </div>
     </main>
   `;
 }
 
 /* ===============================
-   NORMALIZE DATA (CRITICAL)
+   NORMALIZE DATA
 ================================ */
 
 function normalizeExpenses(group) {
@@ -117,7 +123,7 @@ function normalizeExpenses(group) {
     ) {
       const equalShare = exp.amount / group.members.length;
       exp.splits = {};
-      group.members.forEach(m => exp.splits[m] = equalShare);
+      group.members.forEach(m => (exp.splits[m] = equalShare));
       exp.splitType = "equal";
     }
   });
@@ -140,13 +146,22 @@ function renderSplitInputs() {
   }
 
   container.innerHTML = `
-    <label>Enter amount per member</label>
-    ${group.members.map(m => `
-      <div style="display:flex; gap:10px; margin-top:8px;">
-        <span style="width:80px;">${m}</span>
-        <input type="number" data-member="${m}" class="split-input" />
+    <div class="field">
+      <label>Enter amount per member</label>
+
+      <div class="stack">
+        ${group.members.map(m => `
+          <div class="row">
+            <span style="min-width:80px;">${m}</span>
+            <input
+              type="number"
+              data-member="${m}"
+              class="split-input"
+            />
+          </div>
+        `).join("")}
       </div>
-    `).join("")}
+    </div>
   `;
 }
 
@@ -213,45 +228,35 @@ function renderExpenses(group) {
   }
 
   return group.expenses.map(e => `
-    <div style="
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      padding:14px;
-      margin-top:10px;
-      border-radius:14px;
-      background:var(--card-bg);
-    ">
+    <div class="expense-item">
       <div>
-        <div style="font-weight:600;">${e.description}</div>
-        <div style="font-size:13px; color:var(--muted); margin-top:2px;">
-          Paid by ${e.paidBy} · ${e.splitType === "equal" ? "Split equally" : "Unequal split"}
+        <strong>${e.description}</strong>
+        <div class="muted">
+          Paid by ${e.paidBy} ·
+          ${e.splitType === "equal" ? "Split equally" : "Unequal split"}
         </div>
       </div>
 
-      <div style="font-weight:600;">₹${e.amount}</div>
+      <div><strong>₹${e.amount}</strong></div>
     </div>
   `).join("");
 }
 
-
 /* ===============================
-   BALANCE CALCULATION
+   BALANCE & SETTLEMENT
 ================================ */
 
 function calculateBalances(group) {
   const balances = {};
-  group.members.forEach(m => balances[m] = 0);
+  group.members.forEach(m => (balances[m] = 0));
 
   group.expenses.forEach(exp => {
     let splits = {};
 
     if (exp.splitType === "equal") {
       const share = exp.amount / group.members.length;
-      group.members.forEach(m => splits[m] = share);
-    }
-
-    if (exp.splitType === "custom") {
+      group.members.forEach(m => (splits[m] = share));
+    } else {
       splits = exp.splits;
     }
 
@@ -264,10 +269,6 @@ function calculateBalances(group) {
 
   return balances;
 }
-
-/* ===============================
-   SETTLE UP
-================================ */
 
 function calculateSettlements(group) {
   const balances = calculateBalances(group);
@@ -309,19 +310,9 @@ function renderSettlements(group) {
   }
 
   return settlements.map(s => `
-    <div style="
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:14px;
-      margin-top:10px;
-      border-radius:14px;
-      background:#EEF2FF;
-      color:#1E1B4B;
-      font-weight:600;
-    ">
+    <div class="expense-item">
       <span>${s.from} → ${s.to}</span>
-      <span>₹${s.amount.toFixed(2)}</span>
+      <strong>₹${s.amount.toFixed(2)}</strong>
     </div>
   `).join("");
 }
